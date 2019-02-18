@@ -191,7 +191,23 @@ def load_dataset():
 
 def img_path_to_encoding(image_path, model):
     img1 = cv2.imread(image_path, 1)
-    return img_to_encoding(img1, model)
+    PADDING=68
+
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    gray=cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+    # Loop through all the faces detected and determine whether or not they are in the database
+
+    for (x, y, w, h) in faces:
+        x1 = x-PADDING
+        y1 = y-PADDING
+        x2 = x+w+PADDING
+        y2 = y+h+PADDING
+        
+    height, width,a= img1.shape
+    part_image = img1[max(0, y1):min(height, y2), max(0, x1):min(width, x2)]
+    return img_to_encoding(part_image, model)
     
 
 def img_to_encoding(image, model):
